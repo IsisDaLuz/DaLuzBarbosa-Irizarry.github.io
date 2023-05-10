@@ -1,0 +1,4100 @@
+var currentScene = 0;
+var questionNumber = 0;
+var startTime;
+var score = 0;
+//khan button
+var Button = function(config) {
+    this.x = config.x || 0;
+    this.y = config.y || 0;
+    this.width = config.width || 150;
+    this.height = config.height || 50;
+    this.label = config.label || "Click";
+    //this.align = config.textAlign;
+    this.onClick = config.onClick || function() {};
+};
+
+Button.prototype.draw = function() {
+    fill(227, 170, 0);
+    rect(this.x, this.y, this.width, this.height, 5);
+    fill(0, 0, 0);
+    textSize(18);
+    textAlign(LEFT, TOP);
+    text(this.label, this.x+10, this.y+this.height/4);
+};
+
+Button.prototype.isMouseInside = function() {
+    return mouseX > this.x &&
+           mouseX < (this.x + this.width) &&
+           mouseY > this.y &&
+           mouseY < (this.y + this.height);
+};
+
+Button.prototype.handleMouseClick = function() {
+    if (this.isMouseInside()) {
+        this.onClick();
+    }
+};
+
+
+var gameScene1 = function() {
+    currentScene =1;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("What is the rarest m&m color?",49, 170);
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    text("Yellow", 54,242); 
+    text("Brown",262,242);//right answer
+    text("Orange",262,309);
+    text("Red",71,309);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //first question
+
+var gameScene2 = function() {
+    currentScene = 2;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("What is the common name for",49, 158);
+    text("dried plums?",128, 187);
+    fill(252, 252, 252);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Sun maid", 41,242);
+    text("Aroo",262,242); 
+    text("Raisins",262,309);
+    text("Prunes",57,309);//right answer
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+    
+}; // second question
+
+var gameScene3 = function() {
+    currentScene = 3;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("Which country consumes the most",29, 157);
+    text("chocolate per capita?",92, 187);
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Switzerland", 28,241); // right answer
+    text("Belgium",259,241);
+    text("France",264,309);
+    text("Morroco",50,309);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //third question
+
+var gameScene4 = function() {
+    currentScene = 4;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(20);
+    text("What is the name given to Indian food",25, 170);
+    text("cooked over charcoal in a clay oven?",25, 197);
+    fill(252, 252, 252);
+    rect(4,247,184,45);// top right
+    rect(4,319,184,45);// bottom right
+    rect(210,318,184,45);//bottom left
+    rect(210,246,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Biryani", 31,262); 
+    text("Roti",259,260);// right answer
+    text("Samosa",264,331);
+    text("Tandoori",50,331);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //forth question
+
+var gameScene5 = function() {
+    currentScene = 5;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(21);
+    text("What was the first soft drink in space?",25, 170);
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Sprite", 56,239); 
+    text("Fanta",269,240);
+    text("Coca-Cola",246,309);// right answer
+    text("Sumol",55,309);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //fifth question
+
+var gameScene6 = function() {
+    currentScene = 6;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("What is the most consumed ",62, 157);
+    text("manufactured drink in the world?",36, 187);
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Tea", 69,241); // right answer
+    text("Soda",273,241);
+    text("Juice",275,309);
+    text("Alcohol",50,309);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //sixth question
+
+var gameScene7 = function() {
+    currentScene = 7;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("Which is the only edible food that",36, 157);
+    text("never goes bad?",113, 187);
+    fill(250, 250, 250);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Nutella", 53,240); 
+    text("Jelly",267,240);
+    text("Peanut Butter",229,309);
+    text("Honey",63,309);// right answer
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //seventh question
+
+var gameScene8 = function() {
+    currentScene = 8;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("Which country invented ice cream?",25, 170);
+    fill(255, 255, 255);
+    rect(4,251,184,45);// top right
+    rect(4,319,184,45);// bottom right
+    rect(210,322,184,45);//bottom left
+    rect(210,248,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Switzerland", 31,262); 
+    text("Italy",259,260);
+    text("China",264,331);
+    text("Russia",50,331);// right answer
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //eighth question
+
+var gameScene9 = function() {
+    currentScene = 9;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(-20,149,415,94);
+    fill(7, 14, 145);
+    textSize(20);
+    text("Hendrick’s,Larios, and Seagram’s",-2,156);
+   text( "are some of the best-selling brands", -2,175); 
+   text("of which spirit?",-2, 207);
+    fill(255, 255, 255);
+    rect(4,247,184,45);// top right
+    rect(4,324,184,45);// bottom right
+    rect(210,326,184,45);//bottom left
+    rect(210,249,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Tequila", 31,262); 
+    text("Gin",259,260);// right answer
+    text("Rum",264,331);
+    text("Vodka",50,331);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //ninth question
+
+var gameScene10 = function() {
+    currentScene = 10;
+    background(189, 240, 252);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("From which country does Gouda",37, 157);
+    text("cheese originate?",114, 187);
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Switzerland", 30,240); 
+    text("Australia",252,240);
+    text("Netherlands",239,308);// right answer
+    text("Spain",59,308);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //tenth question
+
+var gameScene11 = function() {
+    currentScene = 11;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("What was the first feature-length animated movie ever released",25, 170);
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Lion King", 31,262); 
+    text("Pocahhontas",259,260);// right answer
+    text("Snow White",264,331);
+    text("Sleeping Beauty",50,331);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //eleventh question
+var gameScene12 = function() {
+    currentScene = 12;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(20);
+    text("Which is the only American Football ",33, 158);
+    text("team to go a whole season undefeated",26, 183);
+    //"including Super Bowl?"
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(21);
+    text("Kansas City Chief", 15,244); 
+    text("Chicago Bears",236,244);
+    text("Green Bay Packers",213,311);
+    text("Miami Dolphins",23,311);// right answer
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //twelvth question
+
+var gameScene13 = function() {
+    currentScene = 13;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("What is the biggest continent?",48, 170);
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Asia", 68,241); // right answer
+    text("Africa",269,241);
+    text("North America",222,310);
+    text("South America",15,310);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //thirteenth question
+
+var gameScene14 = function() {
+    currentScene = 14;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("What country has the most ",64, 157);
+    text("natural lakes?",132, 187);
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Russia", 52,239);
+    text("United States",230,239);
+    text("Canada",259,308); // right answer
+    text("Ireland",54,308);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //fourteenth question
+var gameScene15 = function() {
+    currentScene = 15;
+    background(173, 239, 255);
+    image(getImage("cute/Star"),148,-14);
+    fill(255, 255, 255);
+    rect(20,149,358,66);
+    fill(7, 14, 145);
+    textSize(22);
+    text("Which country has the unicorn as ",35, 157);
+    text("its national animal?",107, 187);
+    fill(255, 255, 255);
+    rect(4,231,184,45);// top right
+    rect(4,300,184,45);// bottom right
+    rect(210,300,184,45);//bottom left
+    rect(210,231,184,45);// top left
+    fill(7, 14, 145);
+    textSize(25);
+    text("Spain", 56,240);
+    text("Scotland",251,240);// right answer
+    text("France",262,308); 
+    text("England",44,308);
+    textSize(22);
+    text("Score: " + score, 294, 30);
+    text("Time:" + round((millis()-startTime)/1000),13,30);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,48);
+drawAlanis(270,50,57);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+}; //fifthteenth question
+
+var startButton = new Button({
+    x: 124,
+    y: 300,
+    label: "Start!",
+    onClick: function() {
+        currentScene = 1;
+        gameScene1();
+        startTime = millis();
+    }
+}); // start button
+
+var splashScreen = function (){
+    background(11, 16, 87);
+    fill(255, 255, 255);
+    textSize(27);
+    text("Do You Want To be A Superstar?",5,97);
+    textSize(20);
+    textSize(15);
+    text("Answer the questions correctly to earn stars or move on.",9,269);
+    image(getImage("cute/Star"),142,107);
+       var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   startButton.draw();
+   drawBitmojiIsis(73,175,59);
+drawAlanis(270,131,70);
+fill(251, 255, 0);
+text("Isis",60,241);
+text("Alanis",302,248);
+ 
+};// splash screen function
+
+var endScreen = function ()
+{
+    currentScene=16;
+    background(87, 10, 21);
+    image(getImage("cute/Star"),150,64,100,160);
+    fill(255, 255, 255);
+    textSize(20);
+    text ("Superstar Score = " + score,131,271);
+     var drawHead = function (bitmojiX, bitmojiY, bitmojiHeight){
+//head
+noStroke();
+fill(227, 164, 127);
+ellipse (bitmojiX,bitmojiY,bitmojiHeight/150*86,bitmojiHeight/150*100); //head
+fill(255, 184, 218);
+ellipse(bitmojiX-(bitmojiHeight/150*23),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);//cheeks
+ellipse(bitmojiX+(bitmojiHeight/150*24),bitmojiY+(bitmojiHeight/150*25),bitmojiHeight/150*12,bitmojiHeight/150*7);
+fill(255, 255, 255);
+
+
+
+//earings
+fill(250, 252, 141);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),(bitmojiHeight/150*4),(bitmojiHeight/150*7));
+ellipse(bitmojiX+(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*20),bitmojiHeight/150*4,bitmojiHeight/150*7);
+//hair
+fill(61, 13, 13);
+
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*18), (bitmojiHeight/150*94), bitmojiHeight/150*66, 157,380);//hair
+
+ellipse(bitmojiX,bitmojiY-(bitmojiHeight/150*57),bitmojiHeight/150*45,bitmojiHeight/150*38);//hair bun
+stroke(61, 13, 13);
+strokeWeight(7);
+line(bitmojiX-(bitmojiHeight/150*31), bitmojiY-(bitmojiHeight/150*17), bitmojiX+(bitmojiHeight/150*43), bitmojiY-(bitmojiHeight/150*15));//hair line
+//headband
+noStroke();
+fill(255, 229, 254);
+arc(bitmojiX, bitmojiY-(bitmojiHeight/150*26), bitmojiHeight/150*103, bitmojiHeight/150*17, 163,377);
+//eye
+noStroke();
+fill(255, 255, 255);//eye
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//right eye
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*18,bitmojiHeight/150*12);//left eye
+//eyebrows
+strokeWeight(2);
+stroke(59, 28, 2);
+fill(227, 164, 127);
+arc(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-13),44,169);
+arc(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*4),(bitmojiHeight/150*24),(bitmojiHeight/150*-12),28,138);
+//eye
+fill(54, 25, 2);
+ellipse(bitmojiX-(bitmojiHeight/150*20),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//right eye pupil
+ellipse(bitmojiX+(bitmojiHeight/150*19),bitmojiY+(bitmojiHeight/150*9),bitmojiHeight/150*7,bitmojiHeight/150*7);//left eye pupil
+//nose
+stroke(0,0,0); //nose stroke
+strokeWeight(1);
+fill(198, 136, 99);//skin tone
+bezier(bitmojiX,bitmojiY+(bitmojiHeight/150*11),bitmojiX+(bitmojiHeight/150*22),bitmojiY+(bitmojiHeight/150*24),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*27),bitmojiX-(bitmojiHeight/150*3),bitmojiY+(bitmojiHeight/150*25)); // nose
+//mouth
+fill(255, 255, 255);//teeth
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*32),bitmojiHeight/150*30,bitmojiHeight/150*13,1,180);//bottom mouth
+line(bitmojiX-(bitmojiHeight/150*14),bitmojiY+(bitmojiHeight/150*33),bitmojiX+(bitmojiHeight/150*16),bitmojiY+(bitmojiHeight/150*32));//top mouth
+};
+
+var drawBody = function (bitmojiX, bitmojiY, bitmojiHeight){
+//neck
+noStroke();
+fill(227, 164, 127);
+rect(bitmojiX-(bitmojiHeight/150*13),bitmojiY+(bitmojiHeight/150*44),(bitmojiHeight/150*26),(bitmojiHeight/150*15));
+//shirt
+fill(0, 0, 0);
+rect(bitmojiX-(bitmojiHeight/150*63), bitmojiY+(bitmojiHeight/150*56), bitmojiHeight/150*129, bitmojiHeight/150*58);//shirt
+fill(227, 164, 127);
+arc(bitmojiX+(bitmojiHeight/150*1),bitmojiY+(bitmojiHeight/150*55),bitmojiHeight/150*30,bitmojiHeight/150*23,1,180);// shirt arc
+fill(252, 252, 252);
+ellipse(bitmojiX-(bitmojiHeight/150*39),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*8,bitmojiHeight/150*8);
+//textname
+fill(255, 255, 255);
+
+textSize(bitmojiHeight/150*30);
+
+text("IDLB",bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*85),(bitmojiHeight/150*211),bitmojiHeight/150*201);
+
+//shirt details
+fill(255, 148, 251);
+stroke(255, 255, 255);
+//flowerpetals
+ellipse(bitmojiX-(bitmojiHeight/150*26),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*38),bitmojiY+(bitmojiHeight/150*72),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*36),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*28),bitmojiY+(bitmojiHeight/150*78),bitmojiHeight/150*10,bitmojiHeight/150*9);
+ellipse(bitmojiX-(bitmojiHeight/150*33),bitmojiY+(bitmojiHeight/150*67),bitmojiHeight/150*10,bitmojiHeight/150*9);
+fill(184, 242, 205);//centerflower
+ellipse(bitmojiX-(bitmojiHeight/150*32),bitmojiY+(bitmojiHeight/150*73),bitmojiHeight/150*7,bitmojiHeight/150*6);
+};
+
+var drawBitmojiIsis=function (bitmojiX, bitmojiY, bitmojiHeight){
+    
+    drawHead(bitmojiX, bitmojiY,  bitmojiHeight);
+    drawBody(bitmojiX, bitmojiY, bitmojiHeight);
+    
+};
+var drawhead= function(headX,headY,alanisHeight) {
+   //Alanis
+  
+noStroke();
+fill(224,172,105);
+ellipse(headX+(100*alanisHeight/150),headY+(100*alanisHeight/150),83*alanisHeight/150,100*alanisHeight/150);//head
+
+fill(255, 255, 255);
+arc(headX+(58*alanisHeight/150), headY+(135*alanisHeight/150), -4*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//left cheek
+arc(headX+(140*alanisHeight/150), headY+(128*alanisHeight/150), 8*alanisHeight/150, 55*alanisHeight/150, 0*alanisHeight/150, 361*alanisHeight/150);//right cheek
+
+};
+var drawhair= function(hairX,hairY,alanisHeight) {
+  
+fill(82, 31, 0);//ALL IS HAIR
+quad(hairX+(142*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(79*alanisHeight/150),hairY+(58*alanisHeight/150),hairX+(113*alanisHeight/150),hairY+(60*alanisHeight/150),hairX+(133*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+quad(hairX+(57*alanisHeight/150),hairY+(107*alanisHeight/150),hairX+(62*alanisHeight/150),hairY+(68*alanisHeight/150),hairX+(107*alanisHeight/150),hairY+(43*alanisHeight/150),hairX+(74*alanisHeight/150),hairY+(105*alanisHeight/150));//right hair
+
+ellipse(hairX+(110*alanisHeight/150),hairY+(65*alanisHeight/150),38*alanisHeight/150,23*alanisHeight/150);//right part
+
+ellipse(hairX+(129*alanisHeight/150),hairY+(83*alanisHeight/150),14*alanisHeight/150,39*alanisHeight/150);//left part
+
+ellipse(hairX+(133*alanisHeight/150),hairY+(90*alanisHeight/150),11*alanisHeight/150,47*alanisHeight/150);//left part
+
+ellipse(hairX+(122*alanisHeight/150),hairY+(74*alanisHeight/150),11*alanisHeight/150,13*alanisHeight/150);//left part
+
+rect(hairX+(59*alanisHeight/150),hairY+(101*alanisHeight/150),16*alanisHeight/150,98*alanisHeight/150,88*alanisHeight/150);//left hair longer
+
+rect(hairX+(61*alanisHeight/150),hairY+(66*alanisHeight/150),16*alanisHeight/150,163*alanisHeight/150,88*alanisHeight/150);//double it
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//right hair longer
+
+rect(hairX+(127*alanisHeight/150),hairY+(100*alanisHeight/150),16*alanisHeight/150,88*alanisHeight/150,88*alanisHeight/150);//double it
+
+
+
+//more hair
+fill(110, 76, 58);
+ellipse(hairX+(139*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+ellipse(hairX+(64*alanisHeight/150),hairY+(166*alanisHeight/150),16*alanisHeight/150,157*alanisHeight/150);
+
+};
+var drawfeatures= function(feaX,feaY,alanisHeight) {
+//face
+stroke(0, 0, 0);//face
+fill(255, 255, 255);
+ellipse(feaX+(86*alanisHeight/150),feaY+(97*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),14*alanisHeight/150,5*alanisHeight/150);//eye
+fill(10, 9, 9);
+ellipse(feaX+(86*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+ellipse(feaX+(115*alanisHeight/150),feaY+(96*alanisHeight/150),7*alanisHeight/150,6*alanisHeight/150);//eye
+
+rect(feaX+(72*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//right brow
+rect(feaX+(108*alanisHeight/150),feaY+(87*alanisHeight/150),21*alanisHeight/150,2*alanisHeight/150);//left brow
+
+fill(224,172,105);
+bezier(feaX+(96*alanisHeight/150),feaY+(102*alanisHeight/150),feaX+(92*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(91*alanisHeight/150),feaY+(117*alanisHeight/150),feaX+(101*alanisHeight/150),feaY+(117*alanisHeight/150));//nose
+
+noStroke();
+fill(245, 112, 163);
+arc(feaX+(100*alanisHeight/150),feaY+(129*alanisHeight/150),30*alanisHeight/150,13*alanisHeight/150,1*alanisHeight/150,180*alanisHeight/150);
+
+};
+var drawbody= function(bodyX,bodyY,alanisHeight) {
+//body
+fill(224,172,105);
+rect(bodyX+(85*alanisHeight/150),bodyY+(148*alanisHeight/150),30*alanisHeight/150,10*alanisHeight/150);//neck
+rect(bodyX+(70*alanisHeight/150),bodyY+(157*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//shoulders
+fill(185, 147, 196);
+rect(bodyX+(70*alanisHeight/150),bodyY+(164*alanisHeight/150),60*alanisHeight/150,43*alanisHeight/150);//dress
+fill(201, 189, 189);
+rect(bodyX+(86*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,29*alanisHeight/150);//necklace right
+rect(bodyX+(110*alanisHeight/150),bodyY+(147*alanisHeight/150),4*alanisHeight/150,28*alanisHeight/150);//necklace left
+rect(bodyX+(88*alanisHeight/150),bodyY+(172*alanisHeight/150),24*alanisHeight/150,5*alanisHeight/150);//necklace center
+
+//headwear
+var HB=53;
+var HBB=44;
+ellipse(bodyX+(101*alanisHeight/150),bodyY+(56*alanisHeight/150),55*alanisHeight/150,-8*alanisHeight/150);
+ellipse(bodyX+(100*alanisHeight/150),bodyY+(43*alanisHeight/150),90*alanisHeight/150,-23*alanisHeight/150);
+fill(8, 6, 6);
+};
+
+var drawAlanis= function (alanisX,alanisY,alanisHeight){
+    drawhead(alanisX,alanisY,alanisHeight);
+    drawhair(alanisX,alanisY,alanisHeight);
+    drawfeatures(alanisX,alanisY,alanisHeight);
+    drawbody(alanisX,alanisY,alanisHeight);
+
+};//bitmojiAlanis
+   // startButton.draw();
+   drawBitmojiIsis(73,91,71);
+drawAlanis(270,50,70);
+fill(251, 255, 0);
+text("Isis",64,143);
+text("Alanis",301,150);
+ 
+    
+   
+};
+
+mouseClicked = function() {
+    
+startButton.handleMouseClick();
+
+//question 1
+    if (currentScene === 1 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+        //score++;
+        
+    }
+     if (currentScene === 1 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left
+    {
+        //score++;
+    }
+    if (currentScene === 1 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+        score++;
+        currentScene =2;
+    }
+    if (currentScene === 1 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        //score++;
+    }
+//question 2
+    if (currentScene === 2 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top right
+    {
+        //score++;
+    }
+    if (currentScene === 2 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        score++;
+        currentScene = 3;
+        
+    }
+    if (currentScene === 2 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top left
+    {
+        //score++;
+    }
+    if (currentScene === 2 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom left
+    {
+        //score++;
+    }
+ //question 3
+    if (currentScene === 3 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top right
+    {
+        score++;
+        currentScene = 4;
+    }
+    if (currentScene === 3 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        //score++;
+    }
+    if (currentScene === 3 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top left
+    {
+        
+    }
+    if (currentScene === 3 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom left
+    {
+        //score++;
+    }
+    
+//question 4
+    if (currentScene === 4 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top right
+    {
+       
+    }
+    if (currentScene === 4 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+           score++;
+        currentScene = 5;
+        
+        
+    }
+    if (currentScene === 4 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top left
+    {
+        
+    }
+    if (currentScene === 4 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom left
+    {
+        
+    }
+    
+    //question 5
+    if (currentScene === 5 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+        //score++;
+    }
+    if (currentScene === 5 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left
+    {
+        //score++;
+        
+    }
+    if (currentScene === 5 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+        
+    }
+    if (currentScene === 5 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        score++;
+        currentScene = 6;
+    }
+    
+//question 6
+    if (currentScene === 6 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+        score++;
+        currentScene = 7;
+    }
+    if (currentScene === 6 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+        //score++;
+    }
+    if (currentScene === 6 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+        //score++;
+ 
+    }
+    if (currentScene === 6 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        //score++;
+    }
+
+
+//question 7
+    if (currentScene === 7 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+        //score++;
+        
+    }
+    if (currentScene === 7 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+         score++;
+        currentScene = 8;
+    }
+    if (currentScene === 7 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+        //score++;
+        
+    }
+    if (currentScene === 7 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        //score++;
+    }
+    
+//question 8
+    if (currentScene === 8 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+    }
+    if (currentScene === 8 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+
+    }
+    if (currentScene === 8 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+    } 
+    if (currentScene === 8 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+      score++;
+        currentScene = 9;
+    }
+    
+        
+//question 9
+    if (currentScene === 9 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+    }
+    if (currentScene === 9 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+         score++;
+        currentScene = 10;
+    }
+    if (currentScene === 9 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+
+    }
+    if (currentScene === 9 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+
+    }
+    
+    //question 10
+    if (currentScene === 10 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+
+    }
+    if (currentScene === 10 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+
+    }
+    if (currentScene === 10 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+ 
+    }
+    if (currentScene === 10 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        score++;
+        currentScene = 11;
+    }
+
+//question 11
+    if (currentScene === 11 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+    }
+    if (currentScene === 11 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+    }
+    if (currentScene === 11 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+    }
+    if (currentScene === 11 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        score++;
+        currentScene = 12;
+    }
+    
+//question 12
+    if (currentScene === 12 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+    }
+    if (currentScene === 12 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+         score++;
+         currentScene = 13;
+        
+    }
+    if (currentScene === 12 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+
+    }
+    if (currentScene === 12 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+    }
+
+//question 13
+    if (currentScene === 13 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+        score++;
+        currentScene = 14;
+    }
+    if (currentScene === 13 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+    }
+    if (currentScene === 13 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+    }
+    if (currentScene === 13 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+    }   
+    
+//question 14
+    if (currentScene === 14 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+    }
+    if (currentScene === 14 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+    }
+    if (currentScene === 14 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+    }
+    if (currentScene === 14 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        score++;
+        currentScene = 15;
+        
+    }   
+    
+    
+    
+    
+    
+//question 15
+    if (currentScene === 15 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+ 
+    }
+     if (currentScene === 15 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+    }
+    if (currentScene === 15 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+        score++;
+      endScreen();
+    }
+    if (currentScene === 15 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+        
+    }   
+    //question 13
+    if (currentScene === 13 && mouseX > 4 && mouseX < 190 && mouseY > 231 && mouseY < 274)//top left
+    {
+        score++;
+        currentScene = 14;
+        
+        
+    }
+     if (currentScene === 13 && mouseX > 4 && mouseX < 190 && mouseY > 300 && mouseY < 350 )//bottom left 
+    {
+    }
+    if (currentScene === 13 && mouseX > 210 && mouseX < 380 && mouseY > 231 && mouseY < 280)// top right
+    {
+    }
+    if (currentScene === 13 && mouseX > 210 && mouseX < 390 && mouseY > 300 && mouseY < 350 )//bottom right
+    {
+    }   
+
+};
+
+draw = function() {
+    if (currentScene === 0)
+    {
+        splashScreen();
+    }
+    
+   else if (currentScene === 1)
+    {
+        gameScene1();
+    }
+    else if (currentScene === 2)
+    {
+        gameScene2();
+        
+    }
+    else if (currentScene === 3)
+    {
+        gameScene3();
+    }
+    else if (currentScene ===4)
+    { 
+        gameScene4();
+    }
+    else if (currentScene=== 5)
+    {
+        gameScene5();
+    }
+    else if (currentScene===6)
+    {
+        gameScene6();
+    }
+    else if (currentScene===7)
+    { 
+        gameScene7();
+    }
+    else if (currentScene===8)
+    {
+        gameScene8();
+    }
+    else if (currentScene===9)
+    { 
+        gameScene9();
+    }
+    else if (currentScene===10)
+    {
+        gameScene10();
+    }
+    else if (currentScene===11)
+    {
+        gameScene11();
+    }
+    else if (currentScene===12)
+    {
+        gameScene12();
+    }
+    else if (currentScene===13)
+    {
+        gameScene13();
+    }
+    else if (currentScene===14)
+    { 
+        gameScene14();
+    }
+    else if (currentScene===15)
+    {
+        gameScene15();
+    }
+    else if (currentScene===16)
+    { endScreen();
+    }
+}; 
+
+
+
